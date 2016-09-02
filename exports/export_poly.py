@@ -114,7 +114,10 @@ class ExportPolyShapes(QtCore.QObject):
                        QgsField("Adopt_Date", QVariant.Date),
                        QgsField("Entry_Date", QVariant.Date),
                        QgsField("lor_no", QVariant.Int),
-                       QgsField("route", QVariant.String)]
+                       QgsField("route", QVariant.String),
+                       QgsField("symbol", QVariant.String),
+                       QgsField("element", QVariant.String),
+                       QgsField("hierarchy", QVariant.String)]
         provider.addAttributes(self.fields)
         vlayer.updateFields()
 
@@ -211,7 +214,11 @@ class ExportPolyShapes(QtCore.QObject):
                                QDate().fromString(str(record.value('Adopt_Date')), 'yyyyMMdd'),
                                QDate().fromString(str(record.value('Entry_Date')), 'yyyyMMdd'),
                                record.value('lor_no'),
-                               record.value('route')])
+                               record.value('route'),
+                               record.value('symbol'),
+                               record.value('element'),
+                               record.value('hierarchy')
+                               ])
         return feature
 
     def warn_about_selected_features(self, feature_count):
@@ -289,7 +296,7 @@ class ExportPolyShapes(QtCore.QObject):
                 SELECT Asbinary(rdpoly.geometry) AS geom,
                        poly_id, usrn, RefNo, rec_type, descTxt, locality, town,
                        LocTxt, RdStatus, Swa_org, Adopt_Date, Entry_Date, lor_no,
-                       route
+                       route, rdpoly.symbol, rdpoly.element, rdpoly.hierarchy
                 FROM maint_records
                     LEFT JOIN rdpoly
                         ON maint_records.poly_id = rdpoly.rd_pol_id
@@ -298,7 +305,7 @@ class ExportPolyShapes(QtCore.QObject):
                 SELECT Asbinary(rdpoly.geometry) AS geom,
                        poly_id, usrn, RefNo, rec_type, descTxt, locality, town,
                        LocTxt, RdStatus, Swa_org, Adopt_Date, Entry_Date, lor_no,
-                       route
+                       route, rdpoly.symbol, rdpoly.element, rdpoly.hierarchy
                 FROM rdpoly
                     LEFT JOIN maint_records
                         ON maint_records.poly_id = rdpoly.rd_pol_id
