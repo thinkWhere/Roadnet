@@ -1,0 +1,8 @@
+# Also needs
+# sudo apt-get install qgis ...
+boto3
+coverage
+mock
+nose
+pyodbc
+

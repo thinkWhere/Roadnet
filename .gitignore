@@ -1,0 +1,25 @@
+# Pyc files
+*.pyc
+
+# PyCharm project folder
+.idea/
+
+# RN lock file
+database_files/RNLock
+
+# On-the-fly DB's
+database_files/*_*.sqlite
+
+# Batch files
+*.bat
+
+# Vim swap and tag files
+tags
+*.swp
+
+# Files packaged for copying to repo
+repository_files/
+
+# Python coverage
+.coverage
+cover/*

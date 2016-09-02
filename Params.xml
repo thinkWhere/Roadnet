@@ -1,0 +1,14 @@
+<TwParams>
+	<Application id="Roadnet">
+        <Parameter name="RNDataStorePath"></Parameter>
+        <Parameter name="DbName">roadnet.sqlite</Parameter>
+		<Parameter name="RNPolyEdit">false</Parameter>
+		<Parameter name="RNsrwr">false</Parameter>
+		<Parameter name="AutoSplitESUs">true</Parameter>
+		<Parameter name="PreventOverlappingPolygons">true</Parameter>
+		<Parameter name="RAMP">false</Parameter>
+        <Parameter name="RAMP_output_directory"></Parameter>
+		<Parameter name="Language">ENG</Parameter>
+		<Parameter name="UserName">thinkwhere</Parameter>
+	</Application>
+</TwParams>

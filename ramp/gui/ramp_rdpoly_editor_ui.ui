@@ -1,0 +1,434 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>RdpolyEditorDialog</class>
+ <widget class="QDialog" name="RdpolyEditorDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>589</width>
+    <height>437</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>589</width>
+    <height>437</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>RAMP - Edit Polygon</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_8">
+   <item row="0" column="0">
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>MCL Attributes</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_6">
+      <item row="0" column="0">
+       <layout class="QGridLayout" name="gridLayout_5">
+        <item row="0" column="0" colspan="2">
+         <layout class="QGridLayout" name="gridLayout_2">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>MCL ID:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>USRN:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLineEdit" name="mclLineEdit">
+            <property name="styleSheet">
+             <string notr="true">border-width:0.5px;
+border-style: solid;
+border-radius: 2px;
+border-color:  rgb(100,100,100);
+background-color: rgb(213, 234, 234);</string>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="usrnLineEdit">
+            <property name="styleSheet">
+             <string notr="true">border-width:0.5px;
+border-style: solid;
+border-radius: 2px;
+border-color:  rgb(100,100,100);
+background-color: rgb(213, 234, 234);</string>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_4">
+          <property name="text">
+           <string>Description:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0" rowspan="2">
+         <widget class="QPlainTextEdit" name="lorDescPlainTextEdit">
+          <property name="minimumSize">
+           <size>
+            <width>335</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>366</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">border-width:0.5px;
+border-style: solid;
+border-radius: 2px;
+border-color:  rgb(100,100,100);
+background-color: rgb(213, 234, 234);</string>
+          </property>
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QLabel" name="label_5">
+          <property name="text">
+           <string>No. of Lanes:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="2">
+         <widget class="QLineEdit" name="laneNumberLineEdit">
+          <property name="styleSheet">
+           <string notr="true">border-width:0.5px;
+border-style: solid;
+border-radius: 2px;
+border-color:  rgb(100,100,100);
+background-color: rgb(213, 234, 234);</string>
+          </property>
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QLabel" name="label_6">
+          <property name="text">
+           <string>Speed:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="2">
+         <widget class="QLineEdit" name="speedLineEdit">
+          <property name="styleSheet">
+           <string notr="true">border-width:0.5px;
+border-style: solid;
+border-radius: 2px;
+border-color:  rgb(100,100,100);
+background-color: rgb(213, 234, 234);</string>
+          </property>
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+     <zorder></zorder>
+     <zorder></zorder>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>181</height>
+      </size>
+     </property>
+     <property name="title">
+      <string>Polygon attributes</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_4">
+      <item row="0" column="0">
+       <layout class="QGridLayout" name="gridLayout_3">
+        <item row="0" column="0" colspan="2">
+         <layout class="QGridLayout" name="gridLayout" columnstretch="0,1,0,0,0,0">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>Polygon ID:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="rdpolyLineEdit">
+            <property name="styleSheet">
+             <string notr="true">border-width:0.5px;
+border-style: solid;
+border-radius: 2px;
+border-color:  rgb(100,100,100);
+background-color: rgb(213, 234, 234);</string>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_10">
+            <property name="text">
+             <string>Element:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QComboBox" name="elementComboBox">
+            <property name="minimumSize">
+             <size>
+              <width>176</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="minimumContentsLength">
+             <number>0</number>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2">
+           <widget class="QLabel" name="label_7">
+            <property name="text">
+             <string>desc_2:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="3">
+           <widget class="QComboBox" name="offsetComboBox"/>
+          </item>
+          <item row="1" column="4">
+           <widget class="QLabel" name="label_12">
+            <property name="text">
+             <string>Length (m):</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="5">
+           <widget class="QLineEdit" name="lengthLineEdit">
+            <property name="styleSheet">
+             <string notr="true">border-width:0.5px;
+border-style: solid;
+border-radius: 2px;
+border-color:  rgb(100,100,100);
+background-color: rgb(213, 234, 234);</string>
+            </property>
+            <property name="readOnly">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_11">
+            <property name="text">
+             <string>Hierarchy:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QComboBox" name="hierarchyComboBox"/>
+          </item>
+          <item row="2" column="2">
+           <widget class="QLabel" name="label_8">
+            <property name="text">
+             <string>desc_3:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="3">
+           <widget class="QLineEdit" name="numberLineEdit"/>
+          </item>
+          <item row="2" column="4">
+           <spacer name="horizontalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="2" column="5">
+           <spacer name="horizontalSpacer_3">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLineEdit" name="combinedRefLineEdit">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>1</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>30</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">border-width:0.5px;
+border-style: solid;
+border-radius: 2px;
+border-color:  rgb(100,100,100);
+background-color: rgb(213, 234, 234);</string>
+          </property>
+          <property name="readOnly">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_9">
+          <property name="baseSize">
+           <size>
+            <width>0</width>
+            <height>50</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Combined Ref:</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Save</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+  <zorder>groupBox</zorder>
+  <zorder>mclLineEdit</zorder>
+  <zorder>label</zorder>
+  <zorder>rdpolyLineEdit</zorder>
+  <zorder>label_2</zorder>
+  <zorder>usrnLineEdit</zorder>
+  <zorder>label_3</zorder>
+  <zorder>label</zorder>
+  <zorder>label</zorder>
+  <zorder>mclLineEdit</zorder>
+  <zorder>rdpolyLineEdit</zorder>
+  <zorder>usrnLineEdit</zorder>
+  <zorder>label_2</zorder>
+  <zorder>label_3</zorder>
+  <zorder>lorDescPlainTextEdit</zorder>
+  <zorder>label_4</zorder>
+  <zorder>label_5</zorder>
+  <zorder>laneNumberLineEdit</zorder>
+  <zorder>label_6</zorder>
+  <zorder>speedLineEdit</zorder>
+  <zorder>horizontalSpacer</zorder>
+  <zorder>label_7</zorder>
+  <zorder>label_8</zorder>
+  <zorder>label_9</zorder>
+  <zorder>lineEdit_6</zorder>
+  <zorder>numberLineEdit</zorder>
+  <zorder>combinedRefLineEdit</zorder>
+  <zorder>elementComboBox</zorder>
+  <zorder>hierarchyComboBox</zorder>
+  <zorder>label_10</zorder>
+  <zorder>label_11</zorder>
+  <zorder>groupBox_2</zorder>
+  <zorder>buttonBox</zorder>
+ </widget>
+ <tabstops>
+  <tabstop>elementComboBox</tabstop>
+  <tabstop>hierarchyComboBox</tabstop>
+  <tabstop>offsetComboBox</tabstop>
+  <tabstop>numberLineEdit</tabstop>
+  <tabstop>lengthLineEdit</tabstop>
+  <tabstop>laneNumberLineEdit</tabstop>
+  <tabstop>combinedRefLineEdit</tabstop>
+  <tabstop>rdpolyLineEdit</tabstop>
+  <tabstop>usrnLineEdit</tabstop>
+  <tabstop>buttonBox</tabstop>
+  <tabstop>speedLineEdit</tabstop>
+  <tabstop>lorDescPlainTextEdit</tabstop>
+  <tabstop>mclLineEdit</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>RdpolyEditorDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>RdpolyEditorDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

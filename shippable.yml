@@ -1,0 +1,40 @@
+# Language setting
+language: python
+
+python:
+  - 2.7
+env:
+  - secure: hlMoNV2TAyyq7VyNBwglUBHPZPl5mDcziJ50HsHz7mnQvpXZx7HCjKhVF/KzvTOiOSb2OeZFtZ9d7Y4U0wTQUBbmxcStfaFpwHKHw9okJsaR2efM0im0gF5B7LCu9hxmSmssM2RhuqnMmtzlQ+z0FwCITaJgKYQ3iL8Fsovqnx1jC+lo9cBzMgw9alvn+SL0osE2FalkfP7ulVIOYyCK5CEAjL2dH7NMIJXyzb2ts6D72G+m9CSlZIvR6xFR/ezg9la6OAbaGXpp8IsHG0nj5MDD11rdkLmtDslRYGuwnlOB8XzQcKUFm93vaVbsIltrHyXybwxO0scaeWbuT23+Jw==
+
+matrix:
+
+build:
+    pre_ci:
+    pre_ci_boot:
+        image_name: thinkwhere/qgis_testing
+        image_tag: latest
+        pull: true
+        options: "-e HOME=/root --privileged=True"
+    ci:
+      - ./bin/shippable_tests.sh
+    post_ci:
+    on_success:
+      - ./bin/deploy.py
+    on_failure:
+    push:
+    cache: true  # Set to false if dependencies change in Docker
+
+notifications:
+      email:
+        recipients:
+          - john.stevenson@thinkwhere.com
+          - duncan.mcleish@thinkwhere.com
+          - zlata.popelnuh@thinkwhere.com
+          - stephanie.nulty@thinkwhere.com
+          - matthew.walsh@thinkwhere.com
+        branches:
+          - master
+          - develop
+          - RAMP
+        on_success: always
+        on_failure: always

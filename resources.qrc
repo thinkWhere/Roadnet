@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/plugins/Roadnet" >
+       <file>image/rn_logo_v2.png</file>
+    </qresource>
+    <qresource prefix="/plugins/Roadnet" >
+        <file>image/rn_logo_v2_on.png</file>
+    </qresource>
+</RCC>
