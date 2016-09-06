@@ -11,8 +11,13 @@
 name=Roadnet
 qgisMinimumVersion=2.14
 description=Local Street Gazetteer Database Management Tool
-about=roadNet is an application for managing a BS7666-compliant local street gazetteer (LSG).  It also handles Scottish Roadworks Register associated data and road assets.  See the roadNet homepage for more details.  Requirements: python-qt4-sql
-author=thinkWhere Ltd
+about=roadNet is an application for managing a BS7666-compliant local street gazetteer (LSG).  It was created by thinkWhere to address the needs of local authorities in Scotland, who are required by law to maintain gazetteer data.  It also handles Scottish Roadworks Register associated data and road assets.  
+
+roadNet comprises a number of tools.  The Street Selector allows users to identify street records associated with each section of road, and to open them in the Street Browser.  The Street Browser allows users to view and edit street records and, via the SRWR tab, their associated maintenance records.  There are also tools to export the data in both GIS format (shapefile) and text formats (e.g. SDTF) used to submit data to the central authority.  The RAMP tools extend roadNet by allowing ID numbers to be allocated to polygon data and easy updating of their attributes.
+
+See the roadNet homepage for more details.
+
+Requirements: python-qt4-sql author=thinkWhere Ltd
 version=local_0_aaaaaaaa
 email=support@thinkwhere.com
 
