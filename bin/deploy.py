@@ -147,11 +147,11 @@ def write_plugins_xml(build_name, version):
           <pyqgis_plugin name='Roadnet' version='{version}'>
             <description>Roadnet is a tool used for maintaining a local street gazetteer.</description>
             <version>{version}</version>
-            <qgis_minimum_version>2.4</qgis_minimum_version>
+            <qgis_minimum_version>2.14</qgis_minimum_version>
             <homepage>http://www.thinkwhere.com</homepage>
             <file_name>Roadnet.zip</file_name>
             <author_name>thinkWhere</author_name>
-            <download_url>http://roadnet-builds.s3-website-eu-west-1.amazonaws.com/{build_name}/Roadnet.zip</download_url>
+            <download_url>http://roadnet-builds.s3-eu-west-1.amazonaws.com/{build_name}/Roadnet.zip</download_url>
             <uploaded_by>thinkWhere</uploaded_by>
             <create_date>2014-12-09</create_date>
             <update_date>{update_date}</update_date>

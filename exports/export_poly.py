@@ -115,7 +115,7 @@ class ExportPolyShapes(QtCore.QObject):
                        QgsField("Entry_Date", QVariant.Date),
                        QgsField("lor_no", QVariant.Int),
                        QgsField("route", QVariant.String),
-                       QgsField("symbol", QVariant.String),
+                       QgsField("symbol", QVariant.Int),
                        QgsField("element", QVariant.String),
                        QgsField("hierarchy", QVariant.String)]
         provider.addAttributes(self.fields)
