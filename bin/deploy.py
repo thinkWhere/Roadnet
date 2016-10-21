@@ -78,6 +78,7 @@ def drop_unwanted_files(file_list):
     """
     original_list = file_list
     files_to_drop = [os.path.join('database_files', 'roadnet.sqlite'),
+                     os.path.join('database_files', 'roadnet_empty.sqlite'),
                      '.gitignore',
                      'scratch_space.py',
                      'setup.cfg',

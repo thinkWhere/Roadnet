@@ -34,7 +34,7 @@ class TestDeploy(unittest.TestCase):
             "Version in plugin attributes was "
             "not {} ({})".format(version, attrib_version))
         expected_url = (
-            "http://roadnet-builds.s3-website-eu-west-1.amazonaws.com/"
+            "http://roadnet-builds.s3-eu-west-1.amazonaws.com/"
             "build_99/Roadnet.zip")
         self.assertEqual(
             download_url, expected_url,
