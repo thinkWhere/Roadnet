@@ -2,6 +2,7 @@
 import csv
 import datetime
 import os
+import re
 
 from PyQt4.QtCore import QThread, QObject, pyqtSignal, pyqtSlot, Qt
 from PyQt4.QtGui import *
@@ -92,9 +93,42 @@ class ExportsThread(QThread):
             else:
                 exp.export_srwr()
                 csv_file.close()
+
+            # Remove extra quotes from output file to make SDTF compliant
+            strip_extra_quotes_in_file(csv_filename)
+
             self.signals.task_finished.emit()
         except IOError:
             self.signals.file_is_already_open.emit(csv_filename)
+
+
+def strip_extra_quotes_in_file(csv_filename):
+    """
+    Strip quotes from empty, number and date fields in the exported CSV file.
+    The requirements of the SDTF format are that date fields e.g. 2016-10-21 are
+    unquoted, even though they are text fields.
+
+    :param csv_filename: str, path of exported csv file
+    """
+    # Read in data
+    with open(csv_filename, 'r') as infile:
+        original_rows = infile.readlines()
+
+    # Write out modified version
+    with open(csv_filename, 'w') as outfile:
+        for row in original_rows:
+            stripped_row = re.sub(r'("\d{4}-\d{2}-\d{2}"|"[\d.]*?")', remove_quotes, row)
+            outfile.write(stripped_row)
+
+
+def remove_quotes(match):
+    """
+    Remove quotes from regular expression match object.
+    :param match: match object
+    :return: str, match object text with quotes removed
+    """
+    return re.sub(r'"', '', match.group(0))
+
 
 class GeneralSignals(QObject):
     """
