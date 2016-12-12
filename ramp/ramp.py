@@ -260,7 +260,8 @@ class Ramp(object):
     def check_ramp_table_structure(self):
         """
         Ensure that rdpoly and mcl tables have correct column order, as this
-        is necessary for mappings to work correctly.
+        is necessary for mappings to work correctly.  Any additional columns
+        shouldn't matter.
         """
         table_structures = {
             'rdpoly': ['PK_UID', 'symbol', 'rd_pol_id', 'element', 'hierarchy',
@@ -277,7 +278,7 @@ class Ramp(object):
 
         for table, good_cols in table_structures.iteritems():
             actual_names = self.get_table_column_names(table)
-            if actual_names != good_cols:
+            if actual_names[:len(good_cols)] != good_cols:
                 msg = "Table {} is not suitable for RAMP.  ".format(table)
                 msg += "This is probably due to database migration prior to "
                 msg += "RAMP development.  Contact thinkWhere for advice."
