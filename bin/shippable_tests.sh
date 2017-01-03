@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 
-exit 0
-
+# Remove old pyc files that may exist from previous branches
 find ./ -iname "*.pyc" -delete
+
+# Run tests using virtual frame buffer
 xvfb-run nosetests --with-coverage \
           --exe \
           --cover-erase \

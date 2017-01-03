@@ -155,22 +155,22 @@ class PopulateFilterTableView:
         """
         usrn_to_search = str(self.quick_find_dlg.ui.usrnLineEdit.text()).rstrip()
         row_count = self.model.rowCount()
-        counter = 0
-        match = False
-        while counter < row_count and not match:
+
+        # Find matching row
+        for counter in range(1, row_count + 1):
             idx = self.model.index(counter, 1)
             usrn = str(idx.data())
-            counter += 1
             if usrn_to_search == usrn:
-                match = True
                 self.parent.goto_record(idx.row())
                 self.quick_find_dlg.close()
                 self.filter_dlg.close()
-            if counter == row_count:
-                no_usrn_msg_box = QMessageBox(QMessageBox.Warning, " ", "No USRN matching {}".format(usrn_to_search),
-                                              QMessageBox.Ok, None)
-                no_usrn_msg_box.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
-                no_usrn_msg_box.exec_()
+                return
+
+        # Display error message if record not found
+        no_usrn_msg_box = QMessageBox(QMessageBox.Warning, " ", "No USRN matching {}".format(usrn_to_search),
+                                      QMessageBox.Ok, None)
+        no_usrn_msg_box.setWindowFlags(Qt.CustomizeWindowHint | Qt.WindowTitleHint)
+        no_usrn_msg_box.exec_()
 
     def connect_filters(self):
         """
