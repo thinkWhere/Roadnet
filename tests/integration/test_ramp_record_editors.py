@@ -167,6 +167,9 @@ class TestRampMclRecordEditor(QgisTestCase):
                     'section_description': one_sixty_chars[:150]}
         mre.setup_model_and_mapper("11111")
 
+        # Store list of original linked polygons (normally done on dislaying record.
+        mre.original_linked_polys = mre.get_linked_polys_in_db("11111")
+
         # Act
         # Simulate changes
         mre.dlg.ui.usrnLineEdit.setText('12345678')
