@@ -6,7 +6,10 @@ from qgis.gui import QgsMessageBar
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QMessageBox
 
-from edit_handler import EditHandler, DatabaseHandler, IntersectionHandler
+from edit_handler import (EditHandler,
+                          DatabaseHandler,
+                          IntersectionHandler,
+                          IntersectionHandlerError)
 from Roadnet.generic_functions import ipdb_breakpoint
 from Roadnet import config
 
@@ -243,17 +246,18 @@ class RdpolyIntersectionHandler(IntersectionHandler):
             print('Modifying my_feature {} with original area {}'.format(
                   fid, my_geometry.area()))
 
-        # Delete user-drawn feature
-        provider = self.vlayer.dataProvider()
-        result = provider.deleteFeatures([fid])
-
         # Calculate new geometry
         new_geometry = self.update_my_feature_geometry(my_geometry)
         number_of_parts = len(new_geometry.asMultiPolygon())
         if number_of_parts > 1:
             # Don't allow features that have multiple parts
             self.display_multipart_warning()
-            return
+            msg = "Feature {} intersections created multipart geometries".format(fid)
+            raise IntersectionHandlerError(msg)
+
+        # Delete user-drawn feature
+        provider = self.vlayer.dataProvider()
+        result = provider.deleteFeatures([fid])
 
         # Create new feature
         new_feature = QgsFeature(self.vlayer.pendingFields())
@@ -286,10 +290,9 @@ class RdpolyIntersectionHandler(IntersectionHandler):
         Show warning about multipart feature, depending of whether created
         as new feature or by modification.
         """
-        message = ('Intersection created a multipart feature.  '
-                   'This has been removed.  Stop editing and '
-                   'restart roadNet without saving database changes to '
-                   'revert.')
+        message = ('Intersection would have created a multipart feature.  '
+                   'Please delete feature and redraw.'
+                   )
         self.iface.messageBar().pushMessage('roadNet',
                                             message,
                                             QgsMessageBar.CRITICAL,

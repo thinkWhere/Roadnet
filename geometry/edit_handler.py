@@ -17,6 +17,7 @@ class EditHandler(object):
     """
 
     _edit_buffer = None
+
     def __init__(self, iface, vlayer, db, params, handle_intersect_flag):
         """
         Class is instantiated at beginning of editing session, and also after
@@ -27,7 +28,6 @@ class EditHandler(object):
         self.db_handler = DatabaseHandler(vlayer, db)
         self.params = params
         self.handle_intersect_flag = handle_intersect_flag
-        #self.edit_buffer = vlayer.editBuffer()
 
         self.node_tool = iface.actionNodeTool()
         if self.node_tool.isChecked():
@@ -87,7 +87,12 @@ class EditHandler(object):
             # Handle features added and deleted by intersection
             if config.DEBUG_MODE:
                 print('Handling intersections for committed added feature')
-            self.handle_intersections(fid, is_modify=False)
+            try:
+                self.handle_intersections(fid, is_modify=False)
+            except IntersectionHandlerError as e:
+                # Log error and continue.  Database should be unchanged at this point.
+                if config.DEBUG_MODE:
+                    print e.args[0]
 
     def changes_committed(self, layer_id, changed_geometries):
         """
@@ -101,10 +106,12 @@ class EditHandler(object):
             feature = self.vlayer.getFeatures(
                 QgsFeatureRequest().setFilterFid(fid)).next()
 
+            # Just update database if intersections are ignored
             if self.handle_intersect_flag is False:
                 self.db_handler.change_geometry(fid, feature.geometry())
                 continue
 
+            # Just update database if there are no intersections
             if self.check_for_intersections(feature.id()) is False:
                 self.db_handler.change_geometry(fid, feature.geometry())
                 continue
@@ -112,7 +119,12 @@ class EditHandler(object):
             # Handle features added and deleted by intersection
             if config.DEBUG_MODE:
                 print('Handling intersections for committed changed feature')
-            self.handle_intersections(fid, is_modify=True)
+            try:
+                self.handle_intersections(fid, is_modify=True)
+            except IntersectionHandlerError as e:
+                # Log error and continue.  Database should be unchanged at this point.
+                if config.DEBUG_MODE:
+                    print e.args[0]
 
     def handle_intersections(self, fid, is_modify=False):
         """
@@ -126,6 +138,7 @@ class EditHandler(object):
         # Launch intersection handler and get changed features
         intersect_handler = self.intersection_handler_class(
             self.iface, self.vlayer, fid)
+        ipdb_breakpoint()
         intersect_handler.handle_intersections()
         added_features = intersect_handler.get_added_features()
         deleted_feature_ids = intersect_handler.get_deleted_feature_ids()
@@ -291,7 +304,7 @@ class EditHandler(object):
 
     def warn_if_node_tool(self, toggle_state):
         """
-        Show warning if node tool is used in QGIS 2.8.  Using is can cause hard crashes
+        Show warning if node tool is used in QGIS 2.8.  Using it can cause hard crashes
         when editing already edited features.
         :param toggle_state: boolean sent by the signal.
         """
@@ -587,3 +600,6 @@ def convert_to_points_list(geometry):
     else:
         return geometry.asPolyline()
 
+
+class IntersectionHandlerError(Exception):
+    pass
