@@ -138,7 +138,6 @@ class EditHandler(object):
         # Launch intersection handler and get changed features
         intersect_handler = self.intersection_handler_class(
             self.iface, self.vlayer, fid)
-        ipdb_breakpoint()
         intersect_handler.handle_intersections()
         added_features = intersect_handler.get_added_features()
         deleted_feature_ids = intersect_handler.get_deleted_feature_ids()

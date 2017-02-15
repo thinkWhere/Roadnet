@@ -49,9 +49,9 @@ class RdpolyEditHandler(EditHandler):
         link_count = int(query.record().value('link_count'))
 
         if link_count > 0:
-            warning = ('Warning: rd_pol_id {} has {} maintenance record '
-                       'link(s). Undo last delete to preserve database '
-                       'integrity.'.format(rd_pol_id, link_count))
+            warning = ('Warning: rd_pol_id {} was deleted.  Polygon has '
+                       '{} maintenance record link(s). Undo last delete '
+                       'to preserve database integrity.'.format(rd_pol_id, link_count))
             msg_box = QMessageBox(QMessageBox.Warning, "roadNet",
                                   warning,
                                   QMessageBox.Ok, None, Qt.CustomizeWindowHint)
