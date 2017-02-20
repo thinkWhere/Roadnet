@@ -264,6 +264,8 @@ class EditHandler(object):
         """
         my_feature = self.vlayer.getFeatures(
             QgsFeatureRequest().setFilterFid(fid)).next()
+        if config.DEBUG_MODE:
+            print("DEBUG_MODE: Checking for uncommitted victims.")
         victims = find_intersections(my_feature, self.vlayer)
 
         # Set warning flag for intersection with uncommitted victims
@@ -453,6 +455,8 @@ class IntersectionHandler(object):
         """
         Main method of class used to process the intersections.
         """
+        if config.DEBUG_MODE:
+            print("DEBUG MODE: Populating list of intersections to handle.")
         self.victims = find_intersections(self.my_feature, self.vlayer)
         self.handle_my_feature()
         self.handle_victims()
@@ -529,14 +533,15 @@ def find_intersections(my_feature, vlayer):
 
     # Select features that pass a stricter test
     strict_victims = []
-    POINT, LINE, POLYGON = range(3)
+    POINT, LINE, POLYGON = range(3)  # Enum-like reference for geometry types
     for victim in bbox_victims:
-        # Don't include yourself
-        if victim.id() == my_feature.id():
+        # Don't include yourself or former self
+        # Compare against geometry because committed features get new ids
+        if geometry.equals(victim.geometry()):
             continue
 
         # More precise checks on intersection
-        overlaps, crosses, touches = (False, False, False)
+        overlaps, crosses, touches, contains = (False, False, False, False)
         if geometry.type() == LINE:
             crosses = geometry.crosses(victim.geometry())
             if geometry.touches(victim.geometry()):
@@ -547,8 +552,9 @@ def find_intersections(my_feature, vlayer):
 
         if geometry.type() == POLYGON:
             overlaps = geometry.overlaps(victim.geometry())
+            contains = geometry.contains(victim.geometry())
 
-        if (overlaps or crosses or touches) is True:
+        if (overlaps or crosses or touches or contains) is True:
             # Stricter test has been passed
             strict_victims.append(victim)
 
@@ -560,6 +566,8 @@ def find_intersections(my_feature, vlayer):
                 msg += 'crosses'
             if touches:
                 msg += 'touches'
+            if contains:
+                msg += 'contains'
             print(msg)
 
     return strict_victims

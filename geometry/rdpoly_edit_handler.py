@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import datetime
 
-from qgis.core import QgsFeatureRequest, QgsFeature
+from qgis.core import QgsFeatureRequest, QgsFeature, QgsGeometry
 from qgis.gui import QgsMessageBar
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QMessageBox
@@ -248,12 +248,6 @@ class RdpolyIntersectionHandler(IntersectionHandler):
 
         # Calculate new geometry
         new_geometry = self.update_my_feature_geometry(my_geometry)
-        number_of_parts = len(new_geometry.asMultiPolygon())
-        if number_of_parts > 1:
-            # Don't allow features that have multiple parts
-            self.display_multipart_warning()
-            msg = "Feature {} intersections created multipart geometries".format(fid)
-            raise IntersectionHandlerError(msg)
 
         # Delete user-drawn feature
         provider = self.vlayer.dataProvider()
@@ -277,20 +271,55 @@ class RdpolyIntersectionHandler(IntersectionHandler):
             if config.DEBUG_MODE:
                 print('Processing against victim {}'.format(victim.id()))
             geometry = geometry.difference(victim.geometry())
-            if geometry.area() < 1:
-                # Some intersections are not real and create tiny geometries
-                # In this case, we are done.
+
+        # Drop tiny geometry parts
+        clean_geometry = self.drop_tiny_geometry_parts(geometry)
+
+        # Don't allow features that have multiple non-tiny parts
+        number_of_parts = len(clean_geometry.asMultiPolygon())
+        if number_of_parts > 1:
+            self.display_multipart_warning()
+            fid = self.my_feature.id()
+            msg = "Feature {} intersections created multipart geometries".format(fid)
+            raise IntersectionHandlerError(msg)
+
+        return clean_geometry
+
+    def drop_tiny_geometry_parts(self, geometry):
+        """
+        Remove any parts of feature that have tiny geometries
+        :param geometry: geometry to be updated
+        :return:
+        """
+        parts = geometry.asMultiPolygon()
+        non_tiny_parts = []
+
+        # Find parts with non-tiny area
+        for part in parts:
+            area = QgsGeometry.fromPolygon(part).area()
+            if area > 0.01:
+                non_tiny_parts.append(part)
+            else:
                 if config.DEBUG_MODE:
-                    print('Skipping victim; we have a tiny geometry')
-                continue
-        return geometry
+                    print("DEBUG_MODE: discarding tiny geometry ({} m^2)".format(area))
+
+        # Raise error if all parts are tiny
+        if not non_tiny_parts:
+            fid = self.my_feature.id()
+            msg = "Feature {} intersections created only tiny geometry".format(fid)
+            raise IntersectionHandlerError(msg)
+
+        # A multiPolygon is just a list of polygons
+        clean_geometry = QgsGeometry.fromMultiPolygon(non_tiny_parts)
+
+        return clean_geometry
 
     def display_multipart_warning(self):
         """
         Show warning about multipart feature, depending of whether created
         as new feature or by modification.
         """
-        message = ('Intersection would have created a multipart feature.  '
+        message = ('Intersection would have created a multipart feature, so was not processed.  '
                    'Please delete feature and redraw.'
                    )
         self.iface.messageBar().pushMessage('roadNet',
