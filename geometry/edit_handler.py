@@ -132,7 +132,7 @@ class EditHandler(object):
         database updates for newly created/deleted features.
         :param fid: ID of feature to process
         :param is_modify: boolean.  Set True if intersection cause by
-                                    geometry change.
+            geometry change.
         :return:
         """
         # Launch intersection handler and get changed features

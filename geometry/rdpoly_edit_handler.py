@@ -273,7 +273,7 @@ class RdpolyIntersectionHandler(IntersectionHandler):
             geometry = geometry.difference(victim.geometry())
 
         # Drop tiny geometry parts
-        clean_geometry = self.drop_tiny_geometry_parts(geometry)
+        clean_geometry = self.clean_up_geometry(geometry)
 
         # Don't allow features that have multiple non-tiny parts
         number_of_parts = len(clean_geometry.asMultiPolygon())
@@ -285,12 +285,14 @@ class RdpolyIntersectionHandler(IntersectionHandler):
 
         return clean_geometry
 
-    def drop_tiny_geometry_parts(self, geometry):
+    @staticmethod
+    def clean_up_geometry(geometry):
         """
-        Remove any parts of feature that have tiny geometries
+        Convert to multiPolygon geometry with 'tiny' geometries removed
         :param geometry: geometry to be updated
-        :return:
+        :return clean_geometry: multipart geometry with tiny parts removed
         """
+        geometry.convertToMultiType()  # required by later sections
         parts = geometry.asMultiPolygon()
         non_tiny_parts = []
 
@@ -304,9 +306,8 @@ class RdpolyIntersectionHandler(IntersectionHandler):
                     print("DEBUG_MODE: discarding tiny geometry ({} m^2)".format(area))
 
         # Raise error if all parts are tiny
-        if not non_tiny_parts:
-            fid = self.my_feature.id()
-            msg = "Feature {} intersections created only tiny geometry".format(fid)
+        if len(non_tiny_parts) == 0:
+            msg = "Intersections created only tiny geometry"
             raise IntersectionHandlerError(msg)
 
         # A multiPolygon is just a list of polygons
