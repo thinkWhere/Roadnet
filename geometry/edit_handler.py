@@ -17,6 +17,7 @@ class EditHandler(object):
     """
 
     _edit_buffer = None
+
     def __init__(self, iface, vlayer, db, params, handle_intersect_flag):
         """
         Class is instantiated at beginning of editing session, and also after
@@ -27,7 +28,6 @@ class EditHandler(object):
         self.db_handler = DatabaseHandler(vlayer, db)
         self.params = params
         self.handle_intersect_flag = handle_intersect_flag
-        #self.edit_buffer = vlayer.editBuffer()
 
         self.node_tool = iface.actionNodeTool()
         if self.node_tool.isChecked():
@@ -87,7 +87,12 @@ class EditHandler(object):
             # Handle features added and deleted by intersection
             if config.DEBUG_MODE:
                 print('Handling intersections for committed added feature')
-            self.handle_intersections(fid, is_modify=False)
+            try:
+                self.handle_intersections(fid, is_modify=False)
+            except IntersectionHandlerError as e:
+                # Log error and continue.  Database should be unchanged at this point.
+                if config.DEBUG_MODE:
+                    print e.args[0]
 
     def changes_committed(self, layer_id, changed_geometries):
         """
@@ -101,10 +106,12 @@ class EditHandler(object):
             feature = self.vlayer.getFeatures(
                 QgsFeatureRequest().setFilterFid(fid)).next()
 
+            # Just update database if intersections are ignored
             if self.handle_intersect_flag is False:
                 self.db_handler.change_geometry(fid, feature.geometry())
                 continue
 
+            # Just update database if there are no intersections
             if self.check_for_intersections(feature.id()) is False:
                 self.db_handler.change_geometry(fid, feature.geometry())
                 continue
@@ -112,7 +119,12 @@ class EditHandler(object):
             # Handle features added and deleted by intersection
             if config.DEBUG_MODE:
                 print('Handling intersections for committed changed feature')
-            self.handle_intersections(fid, is_modify=True)
+            try:
+                self.handle_intersections(fid, is_modify=True)
+            except IntersectionHandlerError as e:
+                # Log error and continue.  Database should be unchanged at this point.
+                if config.DEBUG_MODE:
+                    print e.args[0]
 
     def handle_intersections(self, fid, is_modify=False):
         """
@@ -120,7 +132,7 @@ class EditHandler(object):
         database updates for newly created/deleted features.
         :param fid: ID of feature to process
         :param is_modify: boolean.  Set True if intersection cause by
-                                    geometry change.
+            geometry change.
         :return:
         """
         # Launch intersection handler and get changed features
@@ -252,6 +264,8 @@ class EditHandler(object):
         """
         my_feature = self.vlayer.getFeatures(
             QgsFeatureRequest().setFilterFid(fid)).next()
+        if config.DEBUG_MODE:
+            print("DEBUG_MODE: Checking for uncommitted victims.")
         victims = find_intersections(my_feature, self.vlayer)
 
         # Set warning flag for intersection with uncommitted victims
@@ -291,7 +305,7 @@ class EditHandler(object):
 
     def warn_if_node_tool(self, toggle_state):
         """
-        Show warning if node tool is used in QGIS 2.8.  Using is can cause hard crashes
+        Show warning if node tool is used in QGIS 2.8.  Using it can cause hard crashes
         when editing already edited features.
         :param toggle_state: boolean sent by the signal.
         """
@@ -441,6 +455,8 @@ class IntersectionHandler(object):
         """
         Main method of class used to process the intersections.
         """
+        if config.DEBUG_MODE:
+            print("DEBUG MODE: Populating list of intersections to handle.")
         self.victims = find_intersections(self.my_feature, self.vlayer)
         self.handle_my_feature()
         self.handle_victims()
@@ -517,14 +533,15 @@ def find_intersections(my_feature, vlayer):
 
     # Select features that pass a stricter test
     strict_victims = []
-    POINT, LINE, POLYGON = range(3)
+    POINT, LINE, POLYGON = range(3)  # Enum-like reference for geometry types
     for victim in bbox_victims:
-        # Don't include yourself
-        if victim.id() == my_feature.id():
+        # Don't include yourself or former self
+        # Compare against geometry because committed features get new ids
+        if geometry.equals(victim.geometry()):
             continue
 
         # More precise checks on intersection
-        overlaps, crosses, touches = (False, False, False)
+        overlaps, crosses, touches, contains = (False, False, False, False)
         if geometry.type() == LINE:
             crosses = geometry.crosses(victim.geometry())
             if geometry.touches(victim.geometry()):
@@ -535,8 +552,9 @@ def find_intersections(my_feature, vlayer):
 
         if geometry.type() == POLYGON:
             overlaps = geometry.overlaps(victim.geometry())
+            contains = geometry.contains(victim.geometry())
 
-        if (overlaps or crosses or touches) is True:
+        if (overlaps or crosses or touches or contains) is True:
             # Stricter test has been passed
             strict_victims.append(victim)
 
@@ -548,6 +566,8 @@ def find_intersections(my_feature, vlayer):
                 msg += 'crosses'
             if touches:
                 msg += 'touches'
+            if contains:
+                msg += 'contains'
             print(msg)
 
     return strict_victims
@@ -587,3 +607,6 @@ def convert_to_points_list(geometry):
     else:
         return geometry.asPolyline()
 
+
+class IntersectionHandlerError(Exception):
+    pass
