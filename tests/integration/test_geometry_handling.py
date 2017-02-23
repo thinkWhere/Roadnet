@@ -1,6 +1,6 @@
 """
-This script can be run from the command line from the directory above roadNet with:
-python -m Roadnet.tests.test_geometry_handling
+This script can be run from the command line from the Roadnet directory with:
+nosetests -q -s tests.integration.test_geometry_handling
 """
 import unittest
 
@@ -8,8 +8,50 @@ from qgis.core import QgsGeometry, QgsPoint, QgsFeature, QgsVectorLayer, QgsFiel
 from PyQt4.QtCore import QVariant
 
 from Roadnet.geometry.esu_edit_handler import EsuIntersectionHandler
+from Roadnet.geometry.rdpoly_edit_handler import RdpolyIntersectionHandler, IntersectionHandlerError
 from Roadnet.geometry import edit_handler
 from Roadnet.tests.integration.roadnet_test_cases import QgisTestCase
+
+MULTI_WITH_TINY = u'MultiPolygon (((286666.19960006879409775 680663.14264002745039761, ' \
+                  u'286667.41464883968001232 680660.57753706665243953, ' \
+                  u'286662.32514680456370115 680656.23025407828390598, ' \
+                  u'286660.93356714065885171 680656.48326856270432472, ' \
+                  u'286661.84399999998277053 680660.125, ' \
+                  u'286661.86099999997531995 680660.14599999994970858, ' \
+                  u'286662.43800000002374873 680660.875, ' \
+                  u'286662.90600000001722947 680661.31299999996554106, ' \
+                  u'286663.31300000002374873 680661.68799999996554106, ' \
+                  u'286663.81300000002374873 680662, ' \
+                  u'286664.40600000001722947 680662.375, ' \
+                  u'286665.06300000002374873 680662.68799999996554106, ' \
+                  u'286665.68800000002374873 680662.93799999996554106, ' \
+                  u'286666.19960006879409775 680663.14264002745039761)), ' \
+                  u'((' \
+                  u'286662.09704670298378915 680667.59712448180653155, ' \
+                  u'286662.09729453345062211 680667.59729605680331588, ' \
+                  u'286660.50515622308012098 680661.31961597572080791, ' \
+                  u'286660.50515619333600625 680661.31961593753658235, ' \
+                  u'286662.09704670298378915 680667.59712448180653155)))'
+SINGLE_POLYGON = u'Polygon ((286666.19960006879409775 680663.14264002745039761, ' \
+                  u'286667.41464883968001232 680660.57753706665243953, ' \
+                  u'286662.32514680456370115 680656.23025407828390598, ' \
+                  u'286660.93356714065885171 680656.48326856270432472, ' \
+                  u'286661.84399999998277053 680660.125, ' \
+                  u'286661.86099999997531995 680660.14599999994970858, ' \
+                  u'286662.43800000002374873 680660.875, ' \
+                  u'286662.90600000001722947 680661.31299999996554106, ' \
+                  u'286663.31300000002374873 680661.68799999996554106, ' \
+                  u'286663.81300000002374873 680662, ' \
+                  u'286664.40600000001722947 680662.375, ' \
+                  u'286665.06300000002374873 680662.68799999996554106, ' \
+                  u'286665.68800000002374873 680662.93799999996554106, ' \
+                  u'286666.19960006879409775 680663.14264002745039761))'
+TINY_POLYGON = u'Multipolygon (((286662.09704670298378915 680667.59712448180653155, ' \
+                  u'286662.09729453345062211 680667.59729605680331588, ' \
+                  u'286660.50515622308012098 680661.31961597572080791, ' \
+                  u'286660.50515619333600625 680661.31961593753658235, ' \
+                  u'286662.09704670298378915 680667.59712448180653155)))'
+
 
 def prepare_lines_and_geometries():
     # Define features that are used by each of the test classes
@@ -264,6 +306,44 @@ class TestIntersectionFinding(QgisTestCase):
         print('\nResult:')
         print(result_names)
         self.assertEquals(expected_names, result_names)
+
+
+class TestDropTinyGeometryParts(unittest.TestCase):
+    def test_multi_with_tiny_drops_tiny_and_returns_multipolygon(self):
+        # Arrange
+        dirty_geom = QgsGeometry.fromWkt(MULTI_WITH_TINY)
+        clean_multi_geom = QgsGeometry.fromWkt(SINGLE_POLYGON)
+        clean_multi_geom.convertToMultiType()
+
+        # Act
+        clean_geom = RdpolyIntersectionHandler.clean_up_geometry(dirty_geom)
+
+        # Assert
+        print(dirty_geom.exportToWkt())
+        print(clean_geom.exportToWkt())
+        self.assertEqual(clean_geom.exportToWkt(),
+                         clean_multi_geom.exportToWkt())
+
+    def test_tiny_only_raises_error(self):
+        # Arrange
+        dirty_geom = QgsGeometry.fromWkt(TINY_POLYGON)
+
+        # Act and assert
+        with self.assertRaises(IntersectionHandlerError):
+            clean_geom = RdpolyIntersectionHandler.clean_up_geometry(dirty_geom)
+
+    def test_no_tiny_returns_original(self):
+        # Arrange
+        dirty_geom = QgsGeometry.fromWkt(SINGLE_POLYGON)
+        clean_multi_geom = QgsGeometry.fromWkt(SINGLE_POLYGON)
+        clean_multi_geom.convertToMultiType()
+
+        # Act
+        clean_geom = RdpolyIntersectionHandler.clean_up_geometry(dirty_geom)
+
+        # Assert
+        self.assertEqual(clean_geom.exportToWkt(),
+                         clean_multi_geom.exportToWkt())
 
 
 if __name__ == '__main__':
