@@ -134,7 +134,7 @@ class EditLinkedPolysTool(QObject):
         :return:
         """
         # Clear selection from MCL layer to avoid confusion
-        self.current_mcl = self.mcl.selectedFeatures()
+        self.current_mcl = self.mcl.selectedFeaturesIds()
         self.mcl.setSelectedFeatures([])
 
         # Activate element layer and select features from original selection
@@ -178,7 +178,8 @@ class EditLinkedPolysTool(QObject):
         """
         poly_box = self.dlg.ui.linkedPolysListWidget
         poly_box.clear()
-        poly_box.addItems(items)
+        for item in items:
+            poly_box.addItem(str(item))
 
     def get_items_from_linked_poly_box(self):
         """

@@ -27,11 +27,9 @@ build:
 notifications:
       email:
         recipients:
-          - john.stevenson@thinkwhere.com
           - duncan.mcleish@thinkwhere.com
           - zlata.popelnuh@thinkwhere.com
-          - stephanie.nulty@thinkwhere.com
-          - matthew.walsh@thinkwhere.com
+          - colin.wright@thinkwhere.com
         branches:
           - master
           - develop
