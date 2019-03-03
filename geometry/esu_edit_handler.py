@@ -2,7 +2,6 @@
 import datetime
 
 from qgis.core import QgsFeatureRequest, QgsFeature, QgsGeometry
-from qgis.gui import QgsMessageBar
 from Roadnet.geometry.edit_handler import EditHandler, DatabaseHandler, IntersectionHandler
 from Roadnet.generic_functions import ipdb_breakpoint
 import Roadnet.config as config
@@ -163,6 +162,7 @@ class EsuDatabaseHandler(DatabaseHandler):
                 AND esu_version_no IS (SELECT MAX(esu_version_no)
                                        FROM lnkESU_STREET
                                        WHERE esu_id IS {parent_esu_id})
+                AND currency_flag IS 0
                 ;""",
             'lnkESU_STREET_count_parent_records': """
                 SELECT COUNT(esu_id) AS 'parent_record_count'
@@ -238,8 +238,8 @@ class EsuDatabaseHandler(DatabaseHandler):
                 'pk_uid': feature.id()}
 
         # Run queries
-        query = self.run_sql('esu_new_feature', args)
-        query = self.run_sql('tblESU_new_record', args)
+        self.run_sql('esu_new_feature', args)
+        self.run_sql('tblESU_new_record', args)
 
     def add_feature_parent(self, feature, parent_fid):
         # Collect input data
@@ -268,11 +268,11 @@ class EsuDatabaseHandler(DatabaseHandler):
             lnk_esu_street_records_exist = False
 
         # Run queries
-        query = self.run_sql('esu_new_feature', args)
-        query = self.run_sql('tblESU_new_record_with_parent', args)
+        self.run_sql('esu_new_feature', args)
+        self.run_sql('tblESU_new_record_with_parent', args)
         if lnk_esu_street_records_exist:
             self.update_lnk_esu_street_records_with_parents(args)
-            query = self.run_sql('esu_update_with_parent_symbol', args)
+            self.run_sql('esu_update_with_parent_symbol', args)
 
     def update_lnk_esu_street_records_with_parents(self, args):
         """
@@ -304,8 +304,7 @@ class EsuDatabaseHandler(DatabaseHandler):
             args.update(extra_args)
 
             # Update database
-            query = self.run_sql('lnkESU_STREET_new_record_with_parent', args)
-            query = self.run_sql('lnkESU_STREET_close_parent_record', args)
+            self.run_sql('lnkESU_STREET_new_record_with_parent', args)
 
     def change_geometry(self, fid, geometry):
         # Collect input data
@@ -337,13 +336,13 @@ class EsuDatabaseHandler(DatabaseHandler):
                 'closure_date': today, 'esu_id': esu_id}
 
         # Run queries
-        query = self.run_sql('tblESU_copy_skeleton', args)
-        query = self.run_sql('tblESU_make_uncurrent', args)
-        query = self.run_sql('tblESU_fill_skeleton', args)
+        self.run_sql('tblESU_copy_skeleton', args)
+        self.run_sql('tblESU_make_uncurrent', args)
+        self.run_sql('tblESU_fill_skeleton', args)
         if lnk_esu_street_record_exists:
-            query = self.run_sql('lnkESU_STREET_copy_skeleton', args)
-            query = self.run_sql('lnkESU_STREET_make_uncurrent', args)
-            query = self.run_sql('lnkESU_STREET_fill_skeleton', args)
+            self.run_sql('lnkESU_STREET_copy_skeleton', args)
+            self.run_sql('lnkESU_STREET_make_uncurrent', args)
+            self.run_sql('lnkESU_STREET_fill_skeleton', args)
 
     def delete_feature(self, fid):
         # Collect input data
@@ -393,7 +392,7 @@ class EsuDatabaseHandler(DatabaseHandler):
             query = self.run_sql('tblESU_unique_midpoint', args)
             query.first()
             if int(query.value(0)) == 0:  # No matching records found
-                query = None
+                query = None     # clear query otherwise it locks connection to database
                 break
             else:
                 x += 1
@@ -543,4 +542,3 @@ class EsuIntersectionHandler(IntersectionHandler):
         parts = [part for part in parts if part.length() > 0.01]
 
         return parts
-
