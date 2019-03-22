@@ -393,8 +393,8 @@ class DatabaseHandler(object):
         """
         if config.DEBUG_MODE:
             print('Updating database internal statistics.')
-        query = self.run_sql('invalidate_old_statistics')
-        query = self.run_sql('update_statistics')
+        self.run_sql('invalidate_old_statistics')
+        self.run_sql('update_statistics')
 
     def prepare_sql_queries(self):
         """
