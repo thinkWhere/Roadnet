@@ -199,7 +199,7 @@ class ExportCSV:
                     query.value(aval[16]) == ""
 
             change = "I"
-            if query.value(aval[9]) > 0:
+            if (not query.isNull(aval[9])) and query.value(aval[9]) > 0:
                 change = "D"
 
             opts = {
