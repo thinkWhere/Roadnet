@@ -60,7 +60,8 @@ class CloseRecord:
         # Close database records
         usrn = self.street_browser.ui.usrnLineEdit.text()
         today = str(datetime.datetime.now().strftime("%Y%m%d"))
-        self.close_current_record(usrn, today)
+        state = 4   # Permanently closed
+        self.close_current_record(usrn, today, state)
         self.close_esu_links(usrn, today)
         self.repopulate_model()
 
@@ -87,20 +88,23 @@ class CloseRecord:
               % (closure_date, usrn)
         query = QSqlQuery(sql, self.db)
 
-    def close_current_record(self, usrn, closure_date):
+    def close_current_record(self, usrn, closure_date, state):
         """
         Close the street record
         :param usrn: current USRN
         :param closure_date: date string (yyyymmdd)
+        :param state: index of state combo
         """
         sql = """UPDATE tblSTREET
                      SET currency_flag=1,
                          closure_date={closure_date},
-                         closed_by='{username}'
+                         closed_by='{username}',
+                         street_state={state},
+                         state_date={closure_date}
                      WHERE usrn={usrn} AND
                          currency_flag=0;
                 """.format(closure_date=closure_date, usrn=usrn,
-                           username=self.params['UserName'])
+                           username=self.params['UserName'], state=state)
         query = QSqlQuery(sql, self.db)
 
     def repopulate_model(self):

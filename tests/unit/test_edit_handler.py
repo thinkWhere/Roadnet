@@ -2,6 +2,7 @@ import unittest
 from mock import patch, Mock, sentinel
 import Roadnet.geometry.edit_handler as edit_handler
 
+
 class MockDatabaseHandler(unittest.TestCase):
     def setUp(self):
         self.p_databasehandler = patch.object(edit_handler, 'DatabaseHandler')
